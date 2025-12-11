@@ -1,0 +1,88 @@
+#include <iostream>
+using namespace std;
+
+class Car
+{
+public:
+    void start()
+    {
+        cout << "Car started.\n";
+    }
+    void stop()
+    {
+        cout << "Car stopped.\n";
+    }
+    void accelerate()
+    {
+        cout << "Car accelerating.\n";
+    }
+};
+
+class Command
+{
+public:
+    virtual void execute() = 0;
+    virtual ~Command() {}
+};
+
+class StartCar : public Command
+{
+    Car* car;
+public:
+    StartCar(Car* c) : car(c) {}
+    void execute()
+    {
+        car->start();
+    }
+};
+
+class StopCar : public Command
+{
+    Car* car;
+public:
+    StopCar(Car* c) : car(c) {}
+    void execute()
+    {
+        car->stop();
+    }
+};
+
+class AccelerateCar : public Command
+{
+    Car* car;
+public:
+    AccelerateCar(Car* c) : car(c) {}
+    void execute()
+    {
+        car->accelerate();
+    }
+};
+
+class Remote
+{
+    Command* cmd;
+public:
+    void setCommand(Command* c)
+    {
+        cmd = c;
+    }
+    void press()
+    {
+        cmd->execute();
+    }
+};
+
+int main()
+{
+    Car car;
+
+    StartCar start(&car);
+    StopCar stop(&car);
+    AccelerateCar acc(&car);
+
+    Remote remote;
+
+    remote.setCommand(&start); remote.press();
+    remote.setCommand(&acc);   remote.press();
+    remote.setCommand(&stop);  remote.press();
+}

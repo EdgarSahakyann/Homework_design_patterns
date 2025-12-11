@@ -1,0 +1,87 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Handler
+{
+protected:
+    Handler* next = nullptr;
+public:
+    void setNext(Handler* h)
+    {
+        next = h;
+    }
+
+    virtual void handle(const string& request)
+    {
+        if (next)
+        {
+            next->handle(request);
+        }
+    }
+
+    virtual ~Handler() {}
+};
+
+class StartHandler : public Handler
+{
+public:
+    void handle(const string& request) override
+    {
+        if (request == "start")
+        {
+            cout << "Car started.\n";
+        }
+        else if (next)
+        {
+            next->handle(request);
+        }
+    }
+};
+
+class AccelerateHandler : public Handler
+{
+public:
+    void handle(const string& request) override
+    {
+        if (request == "accelerate")
+        {
+            cout << "Car accelerating.\n";
+        }
+        else if (next)
+        {
+            next->handle(request);
+        }
+    }
+};
+
+class StopHandler : public Handler
+{
+public:
+    void handle(const string& request) override
+    {
+        if (request == "stop")
+        {
+            cout << "Car stopped.\n";
+        }
+        else if (next)
+        {
+            next->handle(request);
+        }
+    }
+};
+
+int main()
+{
+    StartHandler start;
+    AccelerateHandler acc;
+    StopHandler stop;
+
+    start.setNext(&acc);
+    acc.setNext(&stop);
+
+    start.handle("start");
+    start.handle("accelerate");
+    start.handle("stop");
+    start.handle("unknown");
+}

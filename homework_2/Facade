@@ -1,0 +1,73 @@
+#include <iostream>
+using namespace std;
+
+class Engine 
+{
+public:
+    void start() 
+    {
+        cout << "Engine: Starting\n";
+    }
+
+    void stop() 
+    {
+        cout << "Engine: Stopping\n";
+    }
+};
+
+class FuelPump 
+{
+public:
+    void pump() 
+    {
+        cout << "FuelPump: Pumping fuel\n";
+    }
+};
+
+class Electronics 
+{
+public:
+    void powerOn() 
+    {
+        cout << "Electronics: Powering on\n";
+    }
+
+    void powerOff() 
+    {
+        cout << "Electronics: Shutting down\n";
+    }
+};
+
+class CarFacade 
+{
+private:
+    Engine engine;
+    FuelPump pump;
+    Electronics electronics;
+
+public:
+    void startCar() 
+    {
+        cout << "CarFacade: Starting car\n";
+        electronics.powerOn();
+        pump.pump();
+        engine.start();
+        cout << "Car started.\n";
+    }
+
+    void stopCar() 
+    {
+        cout << "CarFacade: Stopping car\n";
+        engine.stop();
+        electronics.powerOff();
+        cout << "Car stopped.\n";
+    }
+};
+
+int main() 
+{
+    CarFacade car;
+
+    car.startCar();
+    car.stopCar();
+}

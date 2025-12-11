@@ -1,0 +1,68 @@
+#include <iostream>
+using namespace std;
+
+class EngineImpl
+{
+public:
+    virtual void startEngine() = 0;
+    virtual ~EngineImpl() = default;
+};
+
+class DieselEngine : public EngineImpl
+{
+public:
+    void startEngine() override
+    {
+        cout << "Diesel Engine: Starting\n";
+    }
+};
+
+class ElectricEngine : public EngineImpl
+{
+public:
+    void startEngine() override
+    {
+        cout << "Electric Engine: Starting silently\n";
+    }
+};
+
+class Car
+{
+protected:
+    EngineImpl* engine;
+
+public:
+    Car(EngineImpl* e) : engine(e) {}
+
+    virtual void start() 
+    {
+        cout << "Car: Delegating start to engine\n";
+        engine->startEngine();
+    }
+
+    virtual ~Car() = default;
+};
+
+class SportsCar : public Car
+{
+public:
+    SportsCar(EngineImpl* e) : Car(e) {}
+
+    void start() override
+    {
+        cout << "SportsCar: Starting\n";
+        engine->startEngine();
+    }
+};
+
+int main()
+{
+    DieselEngine diesel;
+    ElectricEngine electric;
+
+    SportsCar car1(&diesel);
+    SportsCar car2(&electric);
+
+    car1.start();
+    car2.start();
+}

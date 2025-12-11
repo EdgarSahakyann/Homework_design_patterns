@@ -1,0 +1,79 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+class Observer
+{
+public:
+    virtual void update(const string& event) = 0;
+    virtual ~Observer() {}
+};
+
+class Car
+{
+    vector<Observer*> observers;
+public:
+    void addObserver(Observer* obs)
+    {
+        observers.push_back(obs);
+    }
+
+    void notify(const string& event)
+    {
+        for (Observer* obs : observers)
+        {
+            obs->update(event);
+        }
+    }
+
+    void start()
+    {
+        cout << "Car started.\n";
+        notify("start");
+    }
+
+    void stop()
+    {
+        cout << "Car stopped.\n";
+        notify("stop");
+    }
+
+    void accelerate()
+    {
+        cout << "Car accelerating.\n";
+        notify("accelerate");
+    }
+};
+
+class Dashboard : public Observer
+{
+public:
+    void update(const string& event)
+    {
+        cout << "Dashboard shows car " << event << ".\n";
+    }
+};
+
+class Logger : public Observer
+{
+public:
+    void update(const string& event)
+    {
+        cout << "Logger records car " << event << ".\n";
+    }
+};
+
+int main()
+{
+    Car car;
+
+    Dashboard dash;
+    Logger log;
+
+    car.addObserver(&dash);
+    car.addObserver(&log);
+
+    car.start();
+    car.accelerate();
+    car.stop();
+}

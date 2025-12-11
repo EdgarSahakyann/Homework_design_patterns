@@ -1,0 +1,72 @@
+#include <iostream>
+#include <memory>
+using namespace std;
+
+class Car
+{
+public:
+    virtual string info() const = 0;
+    virtual int cost() const = 0;
+    virtual ~Car() = default;
+};
+
+class BasicCar : public Car
+{
+public:
+    string info() const override
+    {
+        return "Basic Car";
+    }
+
+    int cost() const override
+    {
+        return 10000;
+    }
+};
+
+class CarDecorator : public Car
+{
+protected:
+    shared_ptr<Car> car;
+public:
+    CarDecorator(shared_ptr<Car> c) : car(c) {}
+};
+
+class Turbo : public CarDecorator
+{
+public:
+    Turbo(shared_ptr<Car> c) : CarDecorator(c) {}
+    string info() const override 
+    {
+        return car->info() + " + Turbo";
+    }
+
+    int cost() const override
+    {
+        return car->cost() + 3000;
+    }
+};
+
+class Spoiler : public CarDecorator
+{
+public:
+    Spoiler(shared_ptr<Car> c) : CarDecorator(c) {}
+    string info() const override
+    {
+        return car->info() + " + Spoiler";
+    }
+    int cost() const override
+    {
+        return car->cost() + 800;
+    }
+};
+
+int main()
+{
+    shared_ptr<Car> car = make_shared<BasicCar>();
+    car = make_shared<Turbo>(car);
+    car = make_shared<Spoiler>(car);
+
+    cout << car->info() << "\n";
+    cout << "Total cost: " << car->cost() << "\n";
+}

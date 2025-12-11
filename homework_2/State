@@ -1,0 +1,85 @@
+#include <iostream>
+#include <memory>
+using namespace std;
+
+class State;
+
+class Car
+{
+public:
+    Car(shared_ptr<State> s) : state(s) {}
+    void setState(shared_ptr<State> s) { state = s; }
+
+    void accelerate();
+    void brake();
+
+private:
+    shared_ptr<State> state;
+};
+
+class State
+{
+public:
+    virtual void accelerate(Car* car) = 0;
+    virtual void brake(Car* car) = 0;
+    virtual ~State() = default;
+};
+
+
+class Stopped : public State
+{
+public:
+    void accelerate(Car* car) override {
+        cout << "Car starts driving.\n";
+        car->setState(make_shared<class Driving>());
+    }
+    void brake(Car* car) override {
+        cout << "Already stopped.\n";
+    }
+};
+
+class Driving : public State
+{
+public:
+    void accelerate(Car* car) override {
+        cout << "Already driving faster.\n";
+    }
+    void brake(Car* car) override {
+        cout << "Car is braking.\n";
+        car->setState(make_shared<class Braking>());
+    }
+};
+
+class Braking : public State
+{
+public:
+    void accelerate(Car* car) override {
+        cout << "Braking stopped, driving again.\n";
+        car->setState(make_shared<Driving>());
+    }
+    void brake(Car* car) override {
+        cout << "Car has stopped.\n";
+        car->setState(make_shared<Stopped>());
+    }
+};
+
+
+void Car::accelerate()
+{
+    state->accelerate(this);
+
+}
+void Car::brake()
+{
+    state->brake(this);
+}
+
+
+int main()
+{
+    Car car(make_shared<Stopped>());
+
+    car.accelerate();
+    car.brake();
+    car.brake();
+}
